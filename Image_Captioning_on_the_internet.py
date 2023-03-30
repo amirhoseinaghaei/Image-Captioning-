@@ -60,7 +60,7 @@ def extract_features(directory):
 # extract features from all images
 # images = extract_features(directory)
 # print('Extracted images: %d' % len(images))
-# save to file
+# # save to file
 # pickle.dump(images, open(os.path.join(WORKING_DIR, 'images.pkl'), 'wb'))
 
 import string
@@ -256,9 +256,10 @@ def create_sequences(tokenizer, max_length, descriptions, photos, vocab_size):
           # encode output sequence
           out_seq = to_categorical([out_seq], num_classes=vocab_size)[0]
           # store
-        X1.append((photos[key][0]))
-        X2.append(in_seq)
-        y.append(out_seq)
+          if key != "":
+            X1.append((photos[key][0]))
+            X2.append(in_seq)
+            y.append(out_seq)
   return np.array(X1), np.array(X2), np.array(y)
 
 
