@@ -1,5 +1,6 @@
 
 import os
+import time
 import numpy as np 
 import pickle
 import tensorflow as tf
@@ -257,10 +258,11 @@ def create_sequences(tokenizer, max_length, descriptions, photos, vocab_size):
           out_seq = to_categorical([out_seq], num_classes=vocab_size)[0]
           # store
           if key != "":
-            X1.append((photos[key][0]))
-            X2.append(in_seq)
-            y.append(out_seq)
-  return np.array(X1), np.array(X2), np.array(y)
+            if len(X1) < 3500:
+                X1.append((photos[key][0]))
+                X2.append(in_seq)
+                y.append(out_seq)
+  return  np.array(X1), np.array(X2), np.array(y)
 
 
 def Build_CNN_FeatureExtractor(vocab_size, max_length):
@@ -318,9 +320,8 @@ print('Vocabulary Size: %d' % vocab_size)
 max_length = max_length(train_descriptions)
 print('Description Length: %d' % max_length)
 # prepare sequences
+
 X1train, X2train, ytrain = create_sequences(tokenizer, max_length, train_descriptions, train_images, vocab_size)
-
-
 # dev dataset
 
 # load test set
@@ -336,7 +337,7 @@ print('Photos: test=%d' % len(test_images))
 # prepare sequences
 X1test, X2test, ytest = create_sequences(tokenizer, max_length, test_descriptions, test_images, vocab_size)
 
-
+print("hi")
 
 # fit model
 
