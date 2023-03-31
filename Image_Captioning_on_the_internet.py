@@ -17,8 +17,8 @@ BASE_DIR = "Flicker_Dataset"
 WORKING_DIR  = "Image_Captioning_Project"
 directory = os.path.join(BASE_DIR, "Images")
 
-images = extract_images(directory)
-pickle.dump(images, open(os.path.join(WORKING_DIR, 'images.pkl'), 'wb'))
+# images = extract_images(directory)
+# pickle.dump(images, open(os.path.join(WORKING_DIR, 'images.pkl'), 'wb'))
 filename = os.path.join(BASE_DIR, "captions.txt")
 doc = load_doc(filename)
 descriptions = load_descriptions(doc)
@@ -68,7 +68,7 @@ test_images = load_photo_images(os.path.join(WORKING_DIR, "images.pkl"), test)
 model = Build_CNN_FeatureExtractor(vocab_size, max_length)
 model.summary()
 epochs = 100
-batch_size = 128
+batch_size = 64
 steps = len(train) // batch_size 
 
 for i in range(epochs):
