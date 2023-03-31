@@ -1,6 +1,5 @@
 
 import os
-import time
 import numpy as np 
 import pickle
 import tensorflow as tf
@@ -21,11 +20,20 @@ from tensorflow.keras.applications.vgg16 import preprocess_input
 from numpy import array
 from pickle import load
 from tensorflow.python.keras.layers.merge import Add
- 
+import string
+from numpy import array
+from pickle import load
+from tensorflow.keras.preprocessing.text import Tokenizer
+from tensorflow.keras.preprocessing.sequence import pad_sequences
+from tensorflow.keras.utils import to_categorical , plot_model
+from tensorflow.keras.models import Model
+from tensorflow.keras.layers import Input, Dense, Embedding, Dropout, LSTM
+from tensorflow.python.keras.layers.merge import Add
+from tensorflow.keras.callbacks import ModelCheckpoint
+
 BASE_DIR = "Flicker_Dataset"
 WORKING_DIR  = "Image_Captioning_Project"
 directory = os.path.join(BASE_DIR, "Images")
-
 # extract features from each photo in the directory
 def extract_features(directory):
  # load the model
@@ -59,12 +67,10 @@ def extract_features(directory):
  return images
  
 # extract features from all images
-# images = extract_features(directory)
+images = extract_features(directory)
 # print('Extracted images: %d' % len(images))
-# # save to file
-# pickle.dump(images, open(os.path.join(WORKING_DIR, 'images.pkl'), 'wb'))
-
-import string
+# save to file
+pickle.dump(images, open(os.path.join(WORKING_DIR, 'images.pkl'), 'wb'))
 
 # load doc into memory
 def load_doc(filename):
@@ -208,6 +214,7 @@ def load_photo_features(filename, dataset):
 def load_photo_images(filename, dataset):
 	# load all images
 	all_images = load(open(filename, 'rb'))
+	# all_images = images
 	# filter features
 	images = {k: all_images[k] for k in dataset}
 	return images
@@ -233,7 +240,7 @@ def max_length(descriptions):
 
 # create sequences of images, input sequences and output words for an image
 # create sequences of images, input sequences and output words for an image
-def create_sequences(tokenizer, max_length, descriptions, photos, vocab_size):
+def create_sequences(tokenizer, max_length, descriptions, photos, vocab_size , batch_size):
   #    if key != "":
   #           np.append(X1,(photos[key][0]))
   #           np.append(X2, in_seq)
@@ -243,7 +250,9 @@ def create_sequences(tokenizer, max_length, descriptions, photos, vocab_size):
   # return X1,X2,y
   X1, X2, y = list(), list(), list()
   # walk through each image identifier
+  n = 0
   for key, desc_list in descriptions.items():
+    n += 1
     # walk through each description for the image
     for desc in desc_list:
       # encode the sequence
@@ -258,38 +267,28 @@ def create_sequences(tokenizer, max_length, descriptions, photos, vocab_size):
           out_seq = to_categorical([out_seq], num_classes=vocab_size)[0]
           # store
           if key != "":
-            if len(X1) < 3500:
                 X1.append((photos[key][0]))
                 X2.append(in_seq)
                 y.append(out_seq)
-  return  np.array(X1), np.array(X2), np.array(y)
+    if n == batch_size: 
+        X1, X2, y = np.asarray(X1), np.asarray(X2), np.asarray(y)
+        yield [X1, X2], y
+        X1, X2, y = list(), list(), list()
+        n = 0      
 
+  return np.asarray(X1), np.asarray(X2), np.asarray(y)
+from keras.api._v2.keras import metrics
 
 def Build_CNN_FeatureExtractor(vocab_size, max_length):
       input1 = Input(shape=(28,28,3))
       conv1 = Conv2D(64, (3, 3), activation= tf.nn.relu, padding="same")(input1)
-      conv2 = Conv2D(64, (3, 3), activation= tf.nn.relu, padding="same")(conv1)
-      max1 =  MaxPooling2D((2,2), (2,2))(conv2)
-      conv3 = Conv2D(128, (3, 3), activation= tf.nn.relu, padding="same")(max1)
-      conv4 = Conv2D(128, (3, 3), activation= tf.nn.relu, padding="same")(conv3)
-      max2 =  MaxPooling2D((2,2), (2,2))(conv4)
-      conv5 = Conv2D(256, (3, 3), activation= tf.nn.relu, padding="same")(max2)
-      conv6 = Conv2D(256, (3, 3), activation= tf.nn.relu, padding="same")(conv5)
-      conv7 = Conv2D(256, (3, 3), activation= tf.nn.relu, padding="same")(conv6)
-      max3 =  MaxPooling2D((2,2), (2,2))(conv7)
-      conv8 = Conv2D(512, (3, 3), activation= tf.nn.relu, padding="same")(max3)
-      conv9 = Conv2D(512, (3, 3), activation= tf.nn.relu, padding="same")(conv8)
-      conv10 = Conv2D(512, (3, 3), activation= tf.nn.relu, padding="same")(conv9)
-      max4 =  MaxPooling2D((2,2), (2,2))(conv10)
-    #   conv11 = Conv2D(512, (3, 3), activation= tf.nn.relu, padding="same")(max4)
-    #   conv12 = Conv2D(512, (3, 3), activation= tf.nn.relu, padding="same")(conv11)
-    #   conv13 = Conv2D(512, (3, 3), activation= tf.nn.relu, padding="same")(conv12)
-    #   max5 =  MaxPooling2D((2,2), (2,2))(conv13)
-      flatten = Flatten()(max4)
-      dense1 = Dense(4096, activation = tf.nn.relu)(flatten)
+      max1 =  MaxPooling2D((2,2), (2,2))(conv1)
+      conv3 = Conv2D(64, (3, 3), activation= tf.nn.relu, padding="same")(max1)
+      max2 =  MaxPooling2D((2,2), (2,2))(conv3)
+      flatten = Flatten()(max2)
+      dense1 = Dense(256, activation = tf.nn.relu)(flatten)
       dropout1 = Dropout(0.4)(dense1)
-      dense2 = Dense(4096)(dropout1)
-      dense3 = Dense(256)(dense2)
+      dense3 = Dense(256)(dropout1)
       input2 = Input(shape = (max_length,))
       embedding = Embedding(input_dim = vocab_size, output_dim = 256)(input2)
       dropout2 = Dropout(0.4)(embedding)
@@ -298,7 +297,7 @@ def Build_CNN_FeatureExtractor(vocab_size, max_length):
       dense4 = Dense(256 , activation = tf.nn.relu)(added)
       output = Dense(vocab_size, activation = tf.nn.softmax)(dense4)
       model = Model(inputs = [input1 , input2], outputs = output)
-      model.compile(loss='categorical_crossentropy', optimizer='adam')
+      model.compile(loss='categorical_crossentropy', optimizer='adam' , metrics = ["accuracy"])
       return model
 # train dataset
 
@@ -310,7 +309,7 @@ print('Dataset: %d' % len(train))
 train_descriptions = load_clean_descriptions(os.path.join(WORKING_DIR, 'descriptions.txt'), train)
 print('Descriptions: train=%d' % len(train_descriptions))
 # photo features
-train_images = load_photo_images(os.path.join(WORKING_DIR, 'images.pkl'), train)
+train_images = load_photo_images(os.path.join(WORKING_DIR, "images.pkl"), train)
 print('Photos: train=%d' % len(train_images))
 # prepare tokenizer
 tokenizer = create_tokenizer(train_descriptions)
@@ -319,11 +318,6 @@ print('Vocabulary Size: %d' % vocab_size)
 # determine the maximum sequence length
 max_length = max_length(train_descriptions)
 print('Description Length: %d' % max_length)
-# prepare sequences
-
-X1train, X2train, ytrain = create_sequences(tokenizer, max_length, train_descriptions, train_images, vocab_size)
-# dev dataset
-
 # load test set
 filename = os.path.join(BASE_DIR, "Flickr_8k.devImages.txt")
 test = load_set(filename)
@@ -332,20 +326,16 @@ print('Dataset: %d' % len(test))
 test_descriptions = load_clean_descriptions(os.path.join(WORKING_DIR, 'descriptions.txt'), test)
 print('Descriptions: test=%d' % len(test_descriptions))
 # photo features
-test_images = load_photo_images(os.path.join(WORKING_DIR, 'images.pkl'), test)
+test_images = load_photo_images(os.path.join(WORKING_DIR, "images.pkl"), test)
 print('Photos: test=%d' % len(test_images))
-# prepare sequences
-X1test, X2test, ytest = create_sequences(tokenizer, max_length, test_descriptions, test_images, vocab_size)
-
-print("hi")
-
-# fit model
-
-# define the model
 model = Build_CNN_FeatureExtractor(vocab_size, max_length)
-# define checkpoint callback
-filepath = 'model-ep{epoch:03d}-loss{loss:.3f}-val_loss{val_loss:.3f}.h5'
-# earlystopping = Ear
-checkpoint = ModelCheckpoint(filepath, monitor='val_loss', verbose=1, save_best_only=True, mode='min')
-# fit model
-model.fit([X1train, X2train], ytrain, epochs=20, batch_size = 128,  verbose=1, callbacks=[checkpoint], validation_data=([X1test, X2test], ytest))
+model.summary()
+epochs = 100
+batch_size = 128
+steps = len(train) // batch_size 
+
+for i in range(epochs):
+  early_stop = EarlyStopping(monitor='val_loss', patience=50)
+  generator = create_sequences(tokenizer, max_length, train_descriptions, train_images, vocab_size, batch_size)
+  test_generator =  create_sequences(tokenizer, max_length, test_descriptions, test_images, vocab_size, batch_size)
+  model.fit(generator, epochs=1, verbose=1, steps_per_epoch = steps , validation_data=(test_generator) , callbacks= [early_stop])
