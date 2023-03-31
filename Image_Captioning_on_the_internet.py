@@ -67,10 +67,10 @@ def extract_features(directory):
  return images
  
 # extract features from all images
-images = extract_features(directory)
+# images = extract_features(directory)
 # print('Extracted images: %d' % len(images))
 # save to file
-pickle.dump(images, open(os.path.join(WORKING_DIR, 'images.pkl'), 'wb'))
+# pickle.dump(images, open(os.path.join(WORKING_DIR, 'images.pkl'), 'wb'))
 
 # load doc into memory
 def load_doc(filename):
