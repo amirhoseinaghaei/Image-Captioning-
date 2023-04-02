@@ -14,7 +14,7 @@ def extract_images(directory):
  images = {}
  for name in tqdm(os.listdir(directory)):
   filename = directory + '/' + name
-  image = load_img(filename, target_size=(64, 64))
+  image = load_img(filename, target_size=(128, 128))
   image = img_to_array(image)
   image = image.reshape((1, image.shape[0], image.shape[1], image.shape[2]))
   image = preprocess_input(image)
