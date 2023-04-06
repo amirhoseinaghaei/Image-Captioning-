@@ -47,6 +47,7 @@ image_size= (image[1], image[2], image[3])
 # Loading the custum network
 Custum_neural_network = Custum_CNN_LSTM(vocab_size , image_size , max_length)
 
+# Building the model
 model = Custum_neural_network.Build_CNN_FeatureExtractor()
 model.summary()
 epochs = 100
