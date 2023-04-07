@@ -54,10 +54,13 @@ epochs = 100
 batch_size = 64
 steps = len(train) // batch_size 
 
+filepath = 'Image_Captioning_Project/model-val_loss:_{val_loss:.3f}.h5'
 
 # Running the model
 for i in range(epochs):
+
+  checkpoint = ModelCheckpoint(filepath, monitor='val_loss', verbose=1, save_best_only=True, mode='min')
   early_stop = EarlyStopping(monitor='val_loss', patience=5)
   generator = preprocessor.create_sequences(tokenizer, max_length, train_descriptions, train_images, vocab_size, batch_size)
   test_generator =  preprocessor.create_sequences(tokenizer, max_length, test_descriptions, test_images, vocab_size, batch_size)
-  model.fit(generator, epochs=1, verbose=1, steps_per_epoch = steps , validation_data=(test_generator) , callbacks= [early_stop])
+  model.fit(generator, epochs=1, verbose=1, steps_per_epoch = steps , validation_data=(test_generator) , callbacks= [checkpoint, early_stop])
