@@ -4,7 +4,7 @@ from tensorflow.keras.preprocessing.text import Tokenizer
 from tensorflow.keras.preprocessing.sequence import pad_sequences
 from tensorflow.keras.utils import to_categorical, plot_model
 from tensorflow.keras import models , Sequential
-
+from tensorflow.keras.models import Model
 from tqdm import tqdm 
 import os 
 import string 
@@ -28,7 +28,32 @@ class preprocessing():
 			image_id = name.split('.')[0]
 			images[image_id] = image
 		return images
-	
+	def extract_images(self):
+		images = {}
+		for name in tqdm(os.listdir(self.directory)):
+			self.filename = self.directory + '/' + name
+			image = load_img(self.filename, target_size=(self.image_size, self.image_size))
+			image = img_to_array(image)
+			image = image.reshape((1, image.shape[0], image.shape[1], image.shape[2]))
+			image = preprocess_input(image)
+			image_id = name.split('.')[0]
+			images[image_id] = image
+		return images
+	def extract_features(self):
+		model = VGG16()
+		model = Model(inputs=model.inputs, outputs=model.layers[-2].output)
+		features = dict()
+		for name in tqdm(os.listdir(self.directory)):
+			filename = self.directory + '/' + name
+			image = load_img(filename, target_size=(224, 224))
+			image = img_to_array(image)
+			image = image.reshape((1, image.shape[0], image.shape[1], image.shape[2]))
+			image = preprocess_input(image)
+			feature = model.predict(image, verbose=0)
+			image_id = name.split('.')[0]
+			features[image_id] = feature
+		return features
+		
 	# load doc into memory
 	def load_doc(self, filename):
 		# open the file as read only
@@ -135,9 +160,9 @@ class preprocessing():
 		return descriptions
 
 	# load photo features
-	def load_photo_features(self,filename, dataset):
+	def load_photo_features(self,filename, Read, dataset, features):
 		# load all features
-		all_features = load(open(filename, 'rb'))
+		all_features = load(open(filename, 'rb')) if Read == False else features
 		# filter features
 		features = {k: all_features[k] for k in dataset}
 		return features
