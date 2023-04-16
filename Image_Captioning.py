@@ -41,30 +41,35 @@ filename = os.path.join(BASE_DIR, "Flickr_8k.trainImages.txt")
 train = preprocessor.load_set(filename)
 train_descriptions = preprocessor.load_clean_descriptions(os.path.join(WORKING_DIR, 'descriptions.txt'), train)
 test = preprocessor.load_set(filename)
-if Custum:
-  train_images = preprocessor.load_photo_images(os.path.join(WORKING_DIR, "images.pkl"),Read, train, images)
-  test_images = preprocessor.load_photo_images(os.path.join(WORKING_DIR, "images.pkl"), Read, test, images)
-else:
-  train_features = preprocessor.load_photo_features(os.path.join(WORKING_DIR, 'features.pkl'), Read, train, features)
-  test_features = preprocessor.load_photo_features(os.path.join(WORKING_DIR, 'features.pkl'), Read, test, features)
 tokenizer = preprocessor.create_tokenizer(train_descriptions)
 vocab_size = len(tokenizer.word_index) + 1
 max_length = preprocessor.max_length(train_descriptions)
 filename = os.path.join(BASE_DIR, "Flickr_8k.devImages.txt")
 test_descriptions = preprocessor.load_clean_descriptions(os.path.join(WORKING_DIR, 'descriptions.txt'), test)
-image = test_images[(list(test_images.keys())[0])].shape
-image_size= (image[1], image[2], image[3])
 
-# Loading the custum network
-Custum_neural_network = Custum_CNN_LSTM(vocab_size , image_size , max_length)
-Pretrained_neural_network = VGG16_Custum_CNN(vocab_size , max_length)
+if Custum:
+  train_images = preprocessor.load_photo_images(os.path.join(WORKING_DIR, "images.pkl"),Read, train, images)
+  test_images = preprocessor.load_photo_images(os.path.join(WORKING_DIR, "images.pkl"), Read, test, images)
+  image = test_images[(list(test_images.keys())[0])].shape
+  image_size= (image[1], image[2], image[3])
+  Custum_neural_network = Custum_CNN_LSTM(vocab_size , image_size , max_length)
+  # Building the model for custum CNN-LSTM model 
+  model1 = Custum_neural_network.Build_CNN_FeatureExtractor()
+  model1.summary()
 
-# Building the model for custum CNN-LSTM model 
-model1 = Custum_neural_network.Build_CNN_FeatureExtractor()
-model1.summary()
-# Building the model for custum VGG16-Custm LSTM model 
-model2 = Pretrained_neural_network.define_model()
-model2.summary()
+
+else:
+  train_features = preprocessor.load_photo_features(os.path.join(WORKING_DIR, 'features.pkl'), Read, train, features)
+  test_features = preprocessor.load_photo_features(os.path.join(WORKING_DIR, 'features.pkl'), Read, test, features)
+  Pretrained_neural_network = VGG16_Custum_CNN(vocab_size , max_length)
+  # Building the model for custum VGG16-Custm LSTM model 
+  model2 = Pretrained_neural_network.define_model()
+  model2.summary()
+
+
+
+
+
 epochs = 100
 batch_size = 64
 steps = len(train) // batch_size 
