@@ -7,7 +7,7 @@ class VGG16_Custum_CNN:
         self.vocab_size = vocab_size
         self.max_length = max_length
     def define_model(self):
-        inputs1 = Input(shape=(2048,))
+        inputs1 = Input(shape=(4096,))
         fe1 = Dropout(0.5)(inputs1)
         fe2 = Dense(256, activation='relu')(fe1)
         inputs2 = Input(shape=(self.max_length,))

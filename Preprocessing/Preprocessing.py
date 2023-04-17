@@ -1,6 +1,6 @@
 from tensorflow.keras.preprocessing.image import load_img, img_to_array
-#from tensorflow.keras.applications.vgg16 import VGG16 , preprocess_input
-from tensorflow.keras.applications.inception_v3 import InceptionV3, preprocess_input
+from tensorflow.keras.applications.vgg16 import VGG16 , preprocess_input
+#from tensorflow.keras.applications.inception_v3 import InceptionV3, preprocess_input
 from tensorflow.keras.preprocessing.text import Tokenizer 
 from tensorflow.keras.preprocessing.sequence import pad_sequences
 from tensorflow.keras.utils import to_categorical, plot_model
@@ -41,12 +41,12 @@ class preprocessing():
 			images[image_id] = image
 		return images
 	def extract_features(self):
-		model = InceptionV3()
+		model = VGG16()
 		model = Model(inputs=model.inputs, outputs=model.layers[-2].output)
 		features = dict()
 		for name in tqdm(os.listdir(self.directory)):
 			filename = self.directory + '/' + name
-			image = load_img(filename, target_size=(299, 299))
+			image = load_img(filename, target_size=(224, 224))
 			image = img_to_array(image)
 			image = image.reshape((1, image.shape[0], image.shape[1], image.shape[2]))
 			image = preprocess_input(image)
@@ -71,7 +71,7 @@ class preprocessing():
 		# process lines
 		for line in doc.split('\n'):
 			# split line by white space
-			tokens = line.split()
+			tokens = line.split(",")
 			if len(line) < 2:
 				continue
 			# take the first token as the image id, the rest as the description
@@ -92,14 +92,19 @@ class preprocessing():
 		table = str.maketrans('', '', string.punctuation)
 		for key, desc_list in descriptions.items():
 			for i in range(len(desc_list)):
+	#			desc = desc_list[i]
+	#			desc = desc.split()
+	#			desc = [word.lower() for word in desc]
+	#			desc = [w.translate(table) for w in desc]
+	#			desc = [word for word in desc if len(word)>1]
+	#			desc = [word for word in desc if word.isalpha()]
+	#			desc_list[i] =  ' '.join(desc)
 				desc = desc_list[i]
-				desc = desc.split()
-				desc = [word.lower() for word in desc]
-				desc = [w.translate(table) for w in desc]
-				desc = [word for word in desc if len(word)>1]
-				desc = [word for word in desc if word.isalpha()]
-				desc_list[i] =  ' '.join(desc)
-
+				desc = desc.lower()
+				desc = desc.replace('[^A-Za-z]', '')
+				desc = desc.replace('\s+', ' ')
+				desc = 'startseq ' + " ".join([word for word in desc.split() if len(word)>1]) + ' endseq'
+				desc_list[i] = desc
 	def to_vocabulary(self, descriptions):
 		all_desc = set()
 		for key in descriptions.keys():

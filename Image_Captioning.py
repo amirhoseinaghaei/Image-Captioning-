@@ -76,7 +76,7 @@ else:
 
 
 
-epochs = 100
+epochs = 20
 batch_size = 64
 steps = len(train) // batch_size 
 
