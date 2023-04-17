@@ -7,12 +7,12 @@ class VGG16_Custum_CNN:
         self.vocab_size = vocab_size
         self.max_length = max_length
     def define_model(self):
-        inputs1 = Input(shape=(4096,))
-        fe1 = Dropout(0.5)(inputs1)
+        inputs1 = Input(shape=(2048,))
+        fe1 = Dropout(0.4)(inputs1)
         fe2 = Dense(256, activation='relu')(fe1)
         inputs2 = Input(shape=(self.max_length,))
         se1 = Embedding(self.vocab_size, 256, mask_zero=True)(inputs2)
-        se2 = Dropout(0.5)(se1)
+        se2 = Dropout(0.4)(se1)
         se3 = LSTM(256)(se2)
         decoder1 = add([fe2, se3])
         decoder2 = Dense(256, activation='relu')(decoder1)
