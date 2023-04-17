@@ -16,7 +16,7 @@ from Preprocessing.Preprocessing import preprocessing
 BASE_DIR = "Flicker_Dataset"
 WORKING_DIR  = "Image_Captioning_Project"
 directory = os.path.join(BASE_DIR, "Images")
-Read = False 
+Read = False
 Custum = False
 # loading preprocessor
 preprocessor = preprocessing(directory , 10)
@@ -40,11 +40,11 @@ preprocessor.save_descriptions(os.path.join(WORKING_DIR, 'descriptions.txt'), de
 filename = os.path.join(BASE_DIR, "Flickr_8k.trainImages.txt")
 train = preprocessor.load_set(filename)
 train_descriptions = preprocessor.load_clean_descriptions(os.path.join(WORKING_DIR, 'descriptions.txt'), train)
-test = preprocessor.load_set(filename)
 tokenizer = preprocessor.create_tokenizer(train_descriptions)
 vocab_size = len(tokenizer.word_index) + 1
 max_length = preprocessor.max_length(train_descriptions)
 filename = os.path.join(BASE_DIR, "Flickr_8k.devImages.txt")
+test = preprocessor.load_set(filename)
 test_descriptions = preprocessor.load_clean_descriptions(os.path.join(WORKING_DIR, 'descriptions.txt'), test)
 
 if Custum:
@@ -76,12 +76,11 @@ steps = len(train) // batch_size
 
 path = "model" + f"{2 if ~Custum else 1}" + "-val_loss:_{val_loss:.3f}.h5"
 filepath = os.path.join(WORKING_DIR, path)
-
+model = model1 if Custum else model2
 # Running the model
 for i in range(epochs):
   checkpoint = ModelCheckpoint(filepath, monitor='val_loss', verbose=1, save_best_only=True, mode='min')
   early_stop = EarlyStopping(monitor='val_loss', patience=5)
   generator = preprocessor.create_sequences(tokenizer, max_length, train_descriptions, train_images if Custum else train_features, vocab_size, batch_size)
   test_generator =  preprocessor.create_sequences(tokenizer, max_length, test_descriptions, test_images if Custum else test_features, vocab_size, batch_size)
-  model = model1 if Custum else model2
   model.fit(generator, epochs=1, verbose=1, steps_per_epoch = steps , validation_data=(test_generator) , callbacks= [checkpoint, early_stop])

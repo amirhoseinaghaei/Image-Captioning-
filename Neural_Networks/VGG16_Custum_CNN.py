@@ -7,7 +7,7 @@ class VGG16_Custum_CNN:
         self.vocab_size = vocab_size
         self.max_length = max_length
     def define_model(self):
-        inputs1 = Input(shape=(4096,))
+        inputs1 = Input(shape=(2048,))
         fe1 = Dropout(0.5)(inputs1)
         fe2 = Dense(256, activation='relu')(fe1)
         inputs2 = Input(shape=(self.max_length,))
@@ -18,7 +18,7 @@ class VGG16_Custum_CNN:
         decoder2 = Dense(256, activation='relu')(decoder1)
         outputs = Dense(self.vocab_size, activation='softmax')(decoder2)
         model = Model(inputs=[inputs1, inputs2], outputs=outputs)
-        model.compile(loss='categorical_crossentropy', optimizer='adam')
+        model.compile(loss='categorical_crossentropy', optimizer='adam' , metrics = ["accuracy"])
         print(model.summary())
         return model
 
