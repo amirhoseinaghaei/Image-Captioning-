@@ -1,0 +1,181 @@
+2023-04-17 00:34:00.713329: I tensorflow/core/platform/cpu_feature_guard.cc:193] This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN) to use the following CPU instructions in performance-critical operations:  AVX2 AVX512F FMA
+To enable them in other operations, rebuild TensorFlow with the appropriate compiler flags.
+2023-04-17 00:34:02.636822: W tensorflow/compiler/xla/stream_executor/platform/default/dso_loader.cc:64] Could not load dynamic library 'libnvinfer.so.7'; dlerror: libnvinfer.so.7: cannot open shared object file: No such file or directory
+2023-04-17 00:34:02.637489: W tensorflow/compiler/xla/stream_executor/platform/default/dso_loader.cc:64] Could not load dynamic library 'libnvinfer_plugin.so.7'; dlerror: libnvinfer_plugin.so.7: cannot open shared object file: No such file or directory
+2023-04-17 00:34:02.637544: W tensorflow/compiler/tf2tensorrt/utils/py_utils.cc:38] TF-TRT Warning: Cannot dlopen some TensorRT libraries. If you would like to use Nvidia GPU with TensorRT, please make sure the missing libraries mentioned above are installed properly.
+2023-04-17 00:34:07.507739: I tensorflow/core/platform/cpu_feature_guard.cc:193] This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN) to use the following CPU instructions in performance-critical operations:  AVX2 AVX512F FMA
+To enable them in other operations, rebuild TensorFlow with the appropriate compiler flags.
+2023-04-17 00:34:10.400023: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1613] Created device /job:localhost/replica:0/task:0/device:GPU:0 with 13595 MB memory:  -> device: 0, name: Tesla T4, pci bus id: 0000:5e:00.0, compute capability: 7.5
+2023-04-17 00:34:10.405229: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1613] Created device /job:localhost/replica:0/task:0/device:GPU:1 with 13595 MB memory:  -> device: 1, name: Tesla T4, pci bus id: 0000:5f:00.0, compute capability: 7.5
+<class 'dict'>
+Model: "model"
+__________________________________________________________________________________________________
+ Layer (type)                   Output Shape         Param #     Connected to                     
+==================================================================================================
+ input_2 (InputLayer)           [(None, 33)]         0           []                               
+                                                                                                  
+ input_1 (InputLayer)           [(None, 2048)]       0           []                               
+                                                                                                  
+ embedding (Embedding)          (None, 33, 256)      1921792     ['input_2[0][0]']                
+                                                                                                  
+ dropout (Dropout)              (None, 2048)         0           ['input_1[0][0]']                
+                                                                                                  
+ dropout_1 (Dropout)            (None, 33, 256)      0           ['embedding[0][0]']              
+                                                                                                  
+ dense (Dense)                  (None, 256)          524544      ['dropout[0][0]']                
+                                                                                                  
+ lstm (LSTM)                    (None, 256)          525312      ['dropout_1[0][0]']              
+                                                                                                  
+ add (Add)                      (None, 256)          0           ['dense[0][0]',                  
+                                                                  'lstm[0][0]']                   
+                                                                                                  
+ dense_1 (Dense)                (None, 256)          65792       ['add[0][0]']                    
+                                                                                                  
+ dense_2 (Dense)                (None, 7507)         1929299     ['dense_1[0][0]']                
+                                                                                                  
+==================================================================================================
+Total params: 4,966,739
+Trainable params: 4,966,739
+Non-trainable params: 0
+__________________________________________________________________________________________________
+None
+Model: "model"
+__________________________________________________________________________________________________
+ Layer (type)                   Output Shape         Param #     Connected to                     
+==================================================================================================
+ input_2 (InputLayer)           [(None, 33)]         0           []                               
+                                                                                                  
+ input_1 (InputLayer)           [(None, 2048)]       0           []                               
+                                                                                                  
+ embedding (Embedding)          (None, 33, 256)      1921792     ['input_2[0][0]']                
+                                                                                                  
+ dropout (Dropout)              (None, 2048)         0           ['input_1[0][0]']                
+                                                                                                  
+ dropout_1 (Dropout)            (None, 33, 256)      0           ['embedding[0][0]']              
+                                                                                                  
+ dense (Dense)                  (None, 256)          524544      ['dropout[0][0]']                
+                                                                                                  
+ lstm (LSTM)                    (None, 256)          525312      ['dropout_1[0][0]']              
+                                                                                                  
+ add (Add)                      (None, 256)          0           ['dense[0][0]',                  
+                                                                  'lstm[0][0]']                   
+                                                                                                  
+ dense_1 (Dense)                (None, 256)          65792       ['add[0][0]']                    
+                                                                                                  
+ dense_2 (Dense)                (None, 7507)         1929299     ['dense_1[0][0]']                
+                                                                                                  
+==================================================================================================
+Total params: 4,966,739
+Trainable params: 4,966,739
+Non-trainable params: 0
+__________________________________________________________________________________________________
+2023-04-17 00:34:17.926730: W tensorflow/core/common_runtime/type_inference.cc:339] Type inference failed. This indicates an invalid graph that escaped type checking. Error message: INVALID_ARGUMENT: expected compatible input types, but input 1:
+type_id: TFT_OPTIONAL
+args {
+  type_id: TFT_PRODUCT
+  args {
+    type_id: TFT_TENSOR
+    args {
+      type_id: TFT_INT32
+    }
+  }
+}
+ is neither a subtype nor a supertype of the combined inputs preceding it:
+type_id: TFT_OPTIONAL
+args {
+  type_id: TFT_PRODUCT
+  args {
+    type_id: TFT_TENSOR
+    args {
+      type_id: TFT_FLOAT
+    }
+  }
+}
+
+	while inferring type of node 'cond_40/output/_23'
+2023-04-17 00:34:24.609262: I tensorflow/compiler/xla/service/service.cc:173] XLA service 0x2b84fc596900 initialized for platform CUDA (this does not guarantee that XLA will be used). Devices:
+2023-04-17 00:34:24.610444: I tensorflow/compiler/xla/service/service.cc:181]   StreamExecutor device (0): Tesla T4, Compute Capability 7.5
+2023-04-17 00:34:24.610571: I tensorflow/compiler/xla/service/service.cc:181]   StreamExecutor device (1): Tesla T4, Compute Capability 7.5
+2023-04-17 00:34:24.722649: I tensorflow/compiler/mlir/tensorflow/utils/dump_mlir_util.cc:268] disabling MLIR crash reproducer, set env var `MLIR_CRASH_REPRODUCER_DIRECTORY` to enable.
+2023-04-17 00:34:25.759248: I tensorflow/tsl/platform/default/subprocess.cc:304] Start cannot spawn child process: No such file or directory
+2023-04-17 00:34:26.165327: I tensorflow/compiler/jit/xla_compilation_cache.cc:477] Compiled cluster using XLA!  This line is logged at most once for the lifetime of the process.
+ 1/93 [..............................] - ETA: 23:05 - loss: 8.9537 - accuracy: 0.0000e+00 2/93 [..............................] - ETA: 21s - loss: 8.8745 - accuracy: 0.0037       3/93 [..............................] - ETA: 38s - loss: 8.7590 - accuracy: 0.0337 4/93 [>.............................] - ETA: 40s - loss: 8.5791 - accuracy: 0.0499 5/93 [>.............................] - ETA: 41s - loss: 8.3403 - accuracy: 0.0598 6/93 [>.............................] - ETA: 40s - loss: 8.0615 - accuracy: 0.0667 7/93 [=>............................] - ETA: 40s - loss: 7.8227 - accuracy: 0.0717 8/93 [=>............................] - ETA: 39s - loss: 7.6325 - accuracy: 0.0756 9/93 [=>............................] - ETA: 39s - loss: 7.5132 - accuracy: 0.078010/93 [==>...........................] - ETA: 38s - loss: 7.4212 - accuracy: 0.074611/93 [==>...........................] - ETA: 38s - loss: 7.3320 - accuracy: 0.071812/93 [==>...........................] - ETA: 36s - loss: 7.2431 - accuracy: 0.070413/93 [===>..........................] - ETA: 36s - loss: 7.1572 - accuracy: 0.067714/93 [===>..........................] - ETA: 34s - loss: 7.0885 - accuracy: 0.068115/93 [===>..........................] - ETA: 34s - loss: 7.0164 - accuracy: 0.070216/93 [====>.........................] - ETA: 34s - loss: 6.9622 - accuracy: 0.072217/93 [====>.........................] - ETA: 33s - loss: 6.9079 - accuracy: 0.074018/93 [====>.........................] - ETA: 33s - loss: 6.8567 - accuracy: 0.075719/93 [=====>........................] - ETA: 32s - loss: 6.8130 - accuracy: 0.077120/93 [=====>........................] - ETA: 32s - loss: 6.7678 - accuracy: 0.078221/93 [=====>........................] - ETA: 31s - loss: 6.7457 - accuracy: 0.079222/93 [======>.......................] - ETA: 31s - loss: 6.7107 - accuracy: 0.080223/93 [======>.......................] - ETA: 30s - loss: 6.6749 - accuracy: 0.081124/93 [======>.......................] - ETA: 30s - loss: 6.6431 - accuracy: 0.082025/93 [=======>......................] - ETA: 29s - loss: 6.6168 - accuracy: 0.082826/93 [=======>......................] - ETA: 29s - loss: 6.5874 - accuracy: 0.083827/93 [=======>......................] - ETA: 29s - loss: 6.5560 - accuracy: 0.084528/93 [========>.....................] - ETA: 28s - loss: 6.5311 - accuracy: 0.085429/93 [========>.....................] - ETA: 28s - loss: 6.5078 - accuracy: 0.086130/93 [========>.....................] - ETA: 27s - loss: 6.4892 - accuracy: 0.087131/93 [=========>....................] - ETA: 27s - loss: 6.4686 - accuracy: 0.088232/93 [=========>....................] - ETA: 27s - loss: 6.4498 - accuracy: 0.089133/93 [=========>....................] - ETA: 26s - loss: 6.4303 - accuracy: 0.089834/93 [=========>....................] - ETA: 26s - loss: 6.4121 - accuracy: 0.090635/93 [==========>...................] - ETA: 25s - loss: 6.3952 - accuracy: 0.091336/93 [==========>...................] - ETA: 25s - loss: 6.3765 - accuracy: 0.091937/93 [==========>...................] - ETA: 25s - loss: 6.3596 - accuracy: 0.092738/93 [===========>..................] - ETA: 24s - loss: 6.3453 - accuracy: 0.093639/93 [===========>..................] - ETA: 23s - loss: 6.3329 - accuracy: 0.094240/93 [===========>..................] - ETA: 23s - loss: 6.3184 - accuracy: 0.094841/93 [============>.................] - ETA: 22s - loss: 6.3056 - accuracy: 0.095542/93 [============>.................] - ETA: 21s - loss: 6.2944 - accuracy: 0.096343/93 [============>.................] - ETA: 21s - loss: 6.2882 - accuracy: 0.096944/93 [=============>................] - ETA: 21s - loss: 6.2747 - accuracy: 0.097445/93 [=============>................] - ETA: 20s - loss: 6.2672 - accuracy: 0.098046/93 [=============>................] - ETA: 20s - loss: 6.2560 - accuracy: 0.098647/93 [==============>...............] - ETA: 19s - loss: 6.2504 - accuracy: 0.099248/93 [==============>...............] - ETA: 19s - loss: 6.2393 - accuracy: 0.099749/93 [==============>...............] - ETA: 18s - loss: 6.2298 - accuracy: 0.100350/93 [===============>..............] - ETA: 18s - loss: 6.2213 - accuracy: 0.101051/93 [===============>..............] - ETA: 18s - loss: 6.2132 - accuracy: 0.101652/93 [===============>..............] - ETA: 17s - loss: 6.2029 - accuracy: 0.102153/93 [================>.............] - ETA: 17s - loss: 6.1981 - accuracy: 0.102654/93 [================>.............] - ETA: 16s - loss: 6.1877 - accuracy: 0.103255/93 [================>.............] - ETA: 16s - loss: 6.1795 - accuracy: 0.103956/93 [=================>............] - ETA: 15s - loss: 6.1708 - accuracy: 0.104557/93 [=================>............] - ETA: 15s - loss: 6.1632 - accuracy: 0.104958/93 [=================>............] - ETA: 14s - loss: 6.1536 - accuracy: 0.105559/93 [==================>...........] - ETA: 14s - loss: 6.1436 - accuracy: 0.106160/93 [==================>...........] - ETA: 14s - loss: 6.1347 - accuracy: 0.106561/93 [==================>...........] - ETA: 13s - loss: 6.1251 - accuracy: 0.106962/93 [===================>..........] - ETA: 13s - loss: 6.1178 - accuracy: 0.107463/93 [===================>..........] - ETA: 12s - loss: 6.1089 - accuracy: 0.108164/93 [===================>..........] - ETA: 12s - loss: 6.0994 - accuracy: 0.108765/93 [===================>..........] - ETA: 11s - loss: 6.0939 - accuracy: 0.109066/93 [====================>.........] - ETA: 11s - loss: 6.0868 - accuracy: 0.109467/93 [====================>.........] - ETA: 10s - loss: 6.0805 - accuracy: 0.109768/93 [====================>.........] - ETA: 10s - loss: 6.0743 - accuracy: 0.110069/93 [=====================>........] - ETA: 10s - loss: 6.0676 - accuracy: 0.110570/93 [=====================>........] - ETA: 9s - loss: 6.0611 - accuracy: 0.1108 71/93 [=====================>........] - ETA: 9s - loss: 6.0532 - accuracy: 0.111172/93 [======================>.......] - ETA: 8s - loss: 6.0462 - accuracy: 0.111373/93 [======================>.......] - ETA: 8s - loss: 6.0389 - accuracy: 0.111874/93 [======================>.......] - ETA: 7s - loss: 6.0337 - accuracy: 0.112175/93 [=======================>......] - ETA: 7s - loss: 6.0263 - accuracy: 0.112576/93 [=======================>......] - ETA: 7s - loss: 6.0189 - accuracy: 0.112977/93 [=======================>......] - ETA: 6s - loss: 6.0139 - accuracy: 0.113378/93 [========================>.....] - ETA: 6s - loss: 6.0071 - accuracy: 0.113579/93 [========================>.....] - ETA: 5s - loss: 6.0016 - accuracy: 0.11372023-04-17 00:35:00.729818: W tensorflow/core/framework/op_kernel.cc:1818] UNKNOWN: KeyError: '3717845800_ab45e255b8'
+Traceback (most recent call last):
+
+  File "/project/6050328/amir99/Image-Captioning-/SimENV/lib/python3.10/site-packages/tensorflow/python/ops/script_ops.py", line 271, in __call__
+    ret = func(*args)
+
+  File "/project/6050328/amir99/Image-Captioning-/SimENV/lib/python3.10/site-packages/tensorflow/python/autograph/impl/api.py", line 642, in wrapper
+    return func(*args, **kwargs)
+
+  File "/project/6050328/amir99/Image-Captioning-/SimENV/lib/python3.10/site-packages/tensorflow/python/data/ops/dataset_ops.py", line 1039, in generator_py_func
+    values = next(generator_state.get_iterator(iterator_id))
+
+  File "/project/6050328/amir99/Image-Captioning-/SimENV/lib/python3.10/site-packages/keras/engine/data_adapter.py", line 901, in wrapped_generator
+    for data in generator_fn():
+
+  File "/project/6050328/amir99/Image-Captioning-/Preprocessing/Preprocessing.py", line 214, in create_sequences
+    X1.append((photos[key][0]))
+
+KeyError: '3717845800_ab45e255b8'
+
+
+80/93 [========================>.....] - ETA: 5s - loss: 5.9964 - accuracy: 0.1140Traceback (most recent call last):
+  File "/project/6050328/amir99/Image-Captioning-/Image_Captioning.py", line 90, in <module>
+    model.fit(generator, epochs=1, verbose=1, steps_per_epoch = steps , validation_data=(test_generator) , callbacks= [checkpoint, early_stop])
+  File "/project/6050328/amir99/Image-Captioning-/SimENV/lib/python3.10/site-packages/keras/utils/traceback_utils.py", line 70, in error_handler
+    raise e.with_traceback(filtered_tb) from None
+  File "/project/6050328/amir99/Image-Captioning-/SimENV/lib/python3.10/site-packages/tensorflow/python/eager/execute.py", line 52, in quick_execute
+    tensors = pywrap_tfe.TFE_Py_Execute(ctx._handle, device_name, op_name,
+tensorflow.python.framework.errors_impl.UnknownError: Graph execution error:
+
+2 root error(s) found.
+  (0) UNKNOWN:  KeyError: '3717845800_ab45e255b8'
+Traceback (most recent call last):
+
+  File "/project/6050328/amir99/Image-Captioning-/SimENV/lib/python3.10/site-packages/tensorflow/python/ops/script_ops.py", line 271, in __call__
+    ret = func(*args)
+
+  File "/project/6050328/amir99/Image-Captioning-/SimENV/lib/python3.10/site-packages/tensorflow/python/autograph/impl/api.py", line 642, in wrapper
+    return func(*args, **kwargs)
+
+  File "/project/6050328/amir99/Image-Captioning-/SimENV/lib/python3.10/site-packages/tensorflow/python/data/ops/dataset_ops.py", line 1039, in generator_py_func
+    values = next(generator_state.get_iterator(iterator_id))
+
+  File "/project/6050328/amir99/Image-Captioning-/SimENV/lib/python3.10/site-packages/keras/engine/data_adapter.py", line 901, in wrapped_generator
+    for data in generator_fn():
+
+  File "/project/6050328/amir99/Image-Captioning-/Preprocessing/Preprocessing.py", line 214, in create_sequences
+    X1.append((photos[key][0]))
+
+KeyError: '3717845800_ab45e255b8'
+
+
+	 [[{{node PyFunc}}]]
+	 [[IteratorGetNext]]
+	 [[model/dropout/dropout/Shape/_8]]
+  (1) UNKNOWN:  KeyError: '3717845800_ab45e255b8'
+Traceback (most recent call last):
+
+  File "/project/6050328/amir99/Image-Captioning-/SimENV/lib/python3.10/site-packages/tensorflow/python/ops/script_ops.py", line 271, in __call__
+    ret = func(*args)
+
+  File "/project/6050328/amir99/Image-Captioning-/SimENV/lib/python3.10/site-packages/tensorflow/python/autograph/impl/api.py", line 642, in wrapper
+    return func(*args, **kwargs)
+
+  File "/project/6050328/amir99/Image-Captioning-/SimENV/lib/python3.10/site-packages/tensorflow/python/data/ops/dataset_ops.py", line 1039, in generator_py_func
+    values = next(generator_state.get_iterator(iterator_id))
+
+  File "/project/6050328/amir99/Image-Captioning-/SimENV/lib/python3.10/site-packages/keras/engine/data_adapter.py", line 901, in wrapped_generator
+    for data in generator_fn():
+
+  File "/project/6050328/amir99/Image-Captioning-/Preprocessing/Preprocessing.py", line 214, in create_sequences
+    X1.append((photos[key][0]))
+
+KeyError: '3717845800_ab45e255b8'
+
+
+	 [[{{node PyFunc}}]]
+	 [[IteratorGetNext]]
+0 successful operations.
+0 derived errors ignored. [Op:__inference_train_function_7871]

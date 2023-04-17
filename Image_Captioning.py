@@ -1,4 +1,4 @@
-
+import itertools
 import os
 import time
 import numpy as np 
@@ -46,7 +46,10 @@ max_length = preprocessor.max_length(train_descriptions)
 filename = os.path.join(BASE_DIR, "Flickr_8k.devImages.txt")
 test = preprocessor.load_set(filename)
 test_descriptions = preprocessor.load_clean_descriptions(os.path.join(WORKING_DIR, 'descriptions.txt'), test)
-
+filename = os.path.join(BASE_DIR, "Flickr_8k.testImages.txt")
+Rtest = preprocessor.load_set(filename)
+R_test_descriptions = preprocessor.load_clean_descriptions(os.path.join(WORKING_DIR, 'descriptions.txt'), Rtest)
+train_descriptions.update(R_test_descriptions)
 if Custum:
   train_images = preprocessor.load_photo_images(os.path.join(WORKING_DIR, "images.pkl"),Read, train, images)
   test_images = preprocessor.load_photo_images(os.path.join(WORKING_DIR, "images.pkl"), Read, test, images)
@@ -62,6 +65,9 @@ else:
   train_features = preprocessor.load_photo_features(os.path.join(WORKING_DIR, 'features.pkl'), Read, train, features)
   test_features = preprocessor.load_photo_features(os.path.join(WORKING_DIR, 'features.pkl'), Read, test, features)
   Pretrained_neural_network = VGG16_Custum_CNN(vocab_size , max_length)
+  # Building the model for custum VGG16-Custm LSTM model 
+  Rtest_features = preprocessor.load_photo_features(os.path.join(WORKING_DIR, 'features.pkl'), Read, Rtest, features)
+  train_features.update(Rtest_features)
   # Building the model for custum VGG16-Custm LSTM model 
   model2 = Pretrained_neural_network.define_model()
   model2.summary()
