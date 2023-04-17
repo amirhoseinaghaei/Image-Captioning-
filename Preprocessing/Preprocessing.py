@@ -76,7 +76,7 @@ class preprocessing():
 			if len(line) < 2:
 				continue
 			# take the first token as the image id, the rest as the description
-			image_id, image_desc = tokens[0], tokens[1:]
+			image_id, image_desc = tokens[0], tokens[1:20]
 			# remove filename from image id
 			image_id = image_id.split('.')[0]
 			# convert description tokens back to string
@@ -104,7 +104,7 @@ class preprocessing():
 				desc = desc.lower()
 				desc = desc.replace('[^A-Za-z]', '')
 				desc = desc.replace('\s+', ' ')
-				desc = 'startseq ' + " ".join([word for word in desc.split() if len(word)>2]) + ' endseq'
+				desc = 'startseq ' + " ".join([word for word in desc.split() if len(word)>1]) + ' endseq'
 				desc_list[i] = desc
 	def to_vocabulary(self, descriptions):
 		all_desc = set()
